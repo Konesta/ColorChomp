@@ -42,27 +42,22 @@ public class ColorChomp : PhysicsGame
 
     public void VaihdaVaria(PhysicsObject kohde)
     {
-        bool varivaihdettu = false;
 
-        if (varivaihdettu == false && kohde.Color == Color.Blue)
+        if (kohde.Color == Color.Blue)
         {
             kohde.Color = Color.Red;
-            varivaihdettu = true;
         }
-        if (varivaihdettu == false && kohde.Color == Color.Red)
+        else if(kohde.Color == Color.Red)
         {
             kohde.Color = Color.Green;
-            varivaihdettu = true;
         }
-        if (varivaihdettu == false && kohde.Color == Color.Green)
+        else if(kohde.Color == Color.Green)
         {
             kohde.Color = Color.Yellow;
-            varivaihdettu = true;
         }
-        if (varivaihdettu == false && kohde.Color == Color.Yellow)
+        else if (kohde.Color == Color.Yellow)
         {
             kohde.Color = Color.Blue;
-            varivaihdettu = true;
         }
 
     }
