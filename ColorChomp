@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+using Jypeli;
+using Jypeli.Assets;
+using Jypeli.Controls;
+using Jypeli.Effects;
+using Jypeli.Widgets;
+
+public class ColorChomp : PhysicsGame
+{
+
+    const int LIIKUTUSVOIMA = 1500;
+	const Color[] VARITAULUKKO = {Color.Blue,Color.Red,Color.Green,Color.Yellow};
+	int tracker = 0;
+    public override void Begin()
+    {
+        Level.CreateBorders();
+
+        LuoPelaaja(100, 100);
+
+        PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
+        Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
+    }
+
+    public void LuoPelaaja(int x, int y)
+    {
+        PhysicsObject pelaaja = new PhysicsObject(x, y);
+        pelaaja.Shape = Shape.Circle;
+        pelaaja.Color = VARITAULUKKO[0];
+        Add(pelaaja);
+
+        Keyboard.Listen(Key.Up, ButtonState.Down, Liikuta, "Liikuta pelaajaa ylöspäin", pelaaja, new Vector(0, LIIKUTUSVOIMA));
+        Keyboard.Listen(Key.Down, ButtonState.Down, Liikuta, "Liikuta pelaajaa alaspäin", pelaaja, new Vector(0, -LIIKUTUSVOIMA));
+        Keyboard.Listen(Key.Left, ButtonState.Down, Liikuta, "Liikuta pelaajaa vasemmalle", pelaaja, new Vector(-LIIKUTUSVOIMA, 0));
+        Keyboard.Listen(Key.Right, ButtonState.Down, Liikuta, "Liikuta pelaajaa oikealle", pelaaja, new Vector(LIIKUTUSVOIMA, 0));
+        Keyboard.Listen(Key.Space, ButtonState.Released, VaihdaVaria, "Vaihda pelaajan väriä", pelaaja);
+    }
+
+    public void Liikuta(PhysicsObject liikutettava, Vector suunta)
+    {
+        liikutettava.Push(suunta);
+    }
+
+    public void VaihdaVaria(PhysicsObject kohde)
+    {
+		tracker++;
+		if(tracker == VARITAULUKKO.Length) 
+		{
+			kohde.Color = VARITAULUKKO[0]
+			tracker = 0;
+		}
+		else kohde.Color == VARITAULUKKO[tracker];
+    }
+}
