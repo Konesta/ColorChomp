@@ -11,6 +11,7 @@ public class ColorChomp : PhysicsGame
 
     const int LIIKUTUSVOIMA = 1500;
     IntMeter pisteLaskuri;
+    const int VIHUJEN_MAARA = 10;
 
     public override void Begin()
     {
@@ -24,7 +25,7 @@ public class ColorChomp : PhysicsGame
 
         PhysicsObject pelaaja = LuoPelaaja(100, 100);
         Add(pelaaja);
-        LuoVihu(100, 100, 10);
+        LuoVihu(100, 100, VIHUJEN_MAARA);
 
 
         Keyboard.Listen(Key.Up, ButtonState.Down, Liikuta, "Liikuta pelaajaa ylöspäin", pelaaja, new Vector(0, LIIKUTUSVOIMA));
@@ -36,7 +37,6 @@ public class ColorChomp : PhysicsGame
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
 
         AddCollisionHandler(pelaaja, "vihu", Tuhoa);
-        AddCollisionHandler(pelaaja, "vihu",  CollisionHandler.AddMeterValue(pisteLaskuri, 1));
     }
 
 
@@ -45,6 +45,7 @@ public class ColorChomp : PhysicsGame
         if (tormaaja.Color == kohde.Color)
         {
             kohde.Destroy();
+            pisteLaskuri.Value += 1;
         }
         else
         {
@@ -55,6 +56,8 @@ public class ColorChomp : PhysicsGame
     public void LuoPistelaskuri()
     {
         pisteLaskuri = new IntMeter(0);
+        pisteLaskuri.MaxValue = VIHUJEN_MAARA;
+        pisteLaskuri.UpperLimit += VoititPelin;
 
         Label pisteNaytto = new Label();
         pisteNaytto.X = Level.Left + 100;
@@ -64,6 +67,11 @@ public class ColorChomp : PhysicsGame
 
         pisteNaytto.BindTo(pisteLaskuri);
         Add(pisteNaytto);
+    }
+
+    void VoititPelin()
+    {
+        MessageDisplay.Add("Voitit pelin!");
     }
 
     public void LuoVihu(double leveys, double korkeus, double maara)
