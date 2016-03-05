@@ -9,30 +9,53 @@ using Jypeli.Widgets;
 public class ColorChomp : PhysicsGame
 {
 
-    int LIIKUTUSVOIMA = 1500;
+    const int LIIKUTUSVOIMA = 1500;
 
     public override void Begin()
     {
-        Level.CreateBorders();
 
-        LuoPelaaja(100, 100);
-
-        PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
-        Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
-    }
-
-    public void LuoPelaaja(int x, int y)
-    {
-        PhysicsObject pelaaja = new PhysicsObject(x, y);
-        pelaaja.Shape = Shape.Circle;
-        pelaaja.Color = Color.Blue;
+        Window.Width = 1000;
+        Window.Height = 800;
+        Level.CreateBorders(0.1, false);
+        PhysicsObject pelaaja = LuoPelaaja(100, 100);
         Add(pelaaja);
+        LuoVihu(100, 100, 10, pelaaja.Color);
+
 
         Keyboard.Listen(Key.Up, ButtonState.Down, Liikuta, "Liikuta pelaajaa ylöspäin", pelaaja, new Vector(0, LIIKUTUSVOIMA));
         Keyboard.Listen(Key.Down, ButtonState.Down, Liikuta, "Liikuta pelaajaa alaspäin", pelaaja, new Vector(0, -LIIKUTUSVOIMA));
         Keyboard.Listen(Key.Left, ButtonState.Down, Liikuta, "Liikuta pelaajaa vasemmalle", pelaaja, new Vector(-LIIKUTUSVOIMA, 0));
         Keyboard.Listen(Key.Right, ButtonState.Down, Liikuta, "Liikuta pelaajaa oikealle", pelaaja, new Vector(LIIKUTUSVOIMA, 0));
-        Keyboard.Listen(Key.Space, ButtonState.Released, VaihdaVaria, "Vaihda pelaajan väriä", pelaaja);
+        Keyboard.Listen(Key.Space, ButtonState.Pressed, VaihdaVaria, "Vaihda pelaajan väriä", pelaaja);
+        PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
+        Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
+        
+        AddCollisionHandler(pelaaja, CollisionHandler.DestroyTarget);
+    }
+
+    public void LuoVihu(double leveys, double korkeus, double maara, Color pelaajanvari)
+    {
+        int i = 0;
+        while (i < maara)
+        {
+            PhysicsObject vihu = new PhysicsObject(leveys, korkeus);
+            
+            vihu.Shape = Shape.Ellipse;
+            vihu.Color = RandomGen.SelectOne<Color>(Color.Blue, Color.Green, Color.Red, Color.Yellow);
+            vihu.Position = RandomGen.NextVector(Level.Left, Level.Right);
+            Add(vihu);
+            i++;
+        }
+    }
+
+
+    public PhysicsObject LuoPelaaja(int x, int y)
+    {
+        PhysicsObject pelaaja = new PhysicsObject(x, y);
+        pelaaja.Shape = Shape.Circle;
+        pelaaja.Color = Color.Blue;
+
+        return pelaaja;
     }
 
     public void Liikuta(PhysicsObject liikutettava, Vector suunta)
