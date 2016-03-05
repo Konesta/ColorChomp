@@ -16,12 +16,15 @@ public class ColorChomp : PhysicsGame
     {
 
         Window.Width = 1200;
-        Window.Height = 1000;
+        Window.Height = 800;
+        Level.Width = 1200;
+        Level.Height = 800;
         LuoPistelaskuri();
         Level.CreateBorders(0.1, false);
+
         PhysicsObject pelaaja = LuoPelaaja(100, 100);
         Add(pelaaja);
-        LuoVihu(100, 100, 10, pelaaja.Color);
+        LuoVihu(100, 100, 10);
 
 
         Keyboard.Listen(Key.Up, ButtonState.Down, Liikuta, "Liikuta pelaajaa ylöspäin", pelaaja, new Vector(0, LIIKUTUSVOIMA));
@@ -32,11 +35,22 @@ public class ColorChomp : PhysicsGame
         PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
 
-        AddCollisionHandler(pelaaja, "vihu", CollisionHandler.DestroyTarget);
+        AddCollisionHandler(pelaaja, "vihu", Tuhoa);
         AddCollisionHandler(pelaaja, "vihu",  CollisionHandler.AddMeterValue(pisteLaskuri, 1));
     }
 
 
+    public void Tuhoa(PhysicsObject tormaaja, PhysicsObject kohde)
+    {
+        if (tormaaja.Color == kohde.Color)
+        {
+            kohde.Destroy();
+        }
+        else
+        {
+            tormaaja.Destroy();
+        }
+    }
 
     public void LuoPistelaskuri()
     {
@@ -52,7 +66,7 @@ public class ColorChomp : PhysicsGame
         Add(pisteNaytto);
     }
 
-    public void LuoVihu(double leveys, double korkeus, double maara, Color pelaajanvari)
+    public void LuoVihu(double leveys, double korkeus, double maara)
     {
         int i = 0;
         while (i < maara)
@@ -61,7 +75,7 @@ public class ColorChomp : PhysicsGame
             
             vihu.Shape = Shape.Ellipse;
             vihu.Color = RandomGen.SelectOne<Color>(Color.Blue, Color.Green, Color.Red, Color.Yellow);
-            vihu.Position = RandomGen.NextVector(Level.Left, Level.Right);
+            vihu.Position = RandomGen.NextVector(Level.Left + 250, Level.Right - 100);
             vihu.Tag = "vihu";
             Add(vihu);
             i++;
@@ -74,6 +88,7 @@ public class ColorChomp : PhysicsGame
         PhysicsObject pelaaja = new PhysicsObject(x, y);
         pelaaja.Shape = Shape.Circle;
         pelaaja.Color = Color.Blue;
+        pelaaja.Position = new Vector(Level.Left + 100, 0);
 
         return pelaaja;
     }
