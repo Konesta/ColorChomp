@@ -10,12 +10,14 @@ public class ColorChomp : PhysicsGame
 {
 
     const int LIIKUTUSVOIMA = 1500;
+    IntMeter pisteLaskuri;
 
     public override void Begin()
     {
 
-        Window.Width = 1000;
-        Window.Height = 800;
+        Window.Width = 1200;
+        Window.Height = 1000;
+        LuoPistelaskuri();
         Level.CreateBorders(0.1, false);
         PhysicsObject pelaaja = LuoPelaaja(100, 100);
         Add(pelaaja);
@@ -29,8 +31,25 @@ public class ColorChomp : PhysicsGame
         Keyboard.Listen(Key.Space, ButtonState.Pressed, VaihdaVaria, "Vaihda pelaajan väriä", pelaaja);
         PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
-        
-        AddCollisionHandler(pelaaja, CollisionHandler.DestroyTarget);
+
+        AddCollisionHandler(pelaaja, "vihu", CollisionHandler.DestroyTarget);
+        AddCollisionHandler(pelaaja, "vihu",  CollisionHandler.AddMeterValue(pisteLaskuri, 1));
+    }
+
+
+
+    public void LuoPistelaskuri()
+    {
+        pisteLaskuri = new IntMeter(0);
+
+        Label pisteNaytto = new Label();
+        pisteNaytto.X = Level.Left + 100;
+        pisteNaytto.Y = Level.Top - 100;
+        pisteNaytto.TextColor = Color.Black;
+        pisteNaytto.Color = Color.White;
+
+        pisteNaytto.BindTo(pisteLaskuri);
+        Add(pisteNaytto);
     }
 
     public void LuoVihu(double leveys, double korkeus, double maara, Color pelaajanvari)
@@ -43,6 +62,7 @@ public class ColorChomp : PhysicsGame
             vihu.Shape = Shape.Ellipse;
             vihu.Color = RandomGen.SelectOne<Color>(Color.Blue, Color.Green, Color.Red, Color.Yellow);
             vihu.Position = RandomGen.NextVector(Level.Left, Level.Right);
+            vihu.Tag = "vihu";
             Add(vihu);
             i++;
         }
